@@ -15,7 +15,7 @@ integrity-verified backups, and generate safe synthetic test data.
 
 ## Requirements
 
-- Python 3.10 or newer
+- Python 3.10 or newer (developed and tested with Python 3.14)
 - PostgreSQL client tools (`pg_dump` must be on your `PATH`)
 - A PostgreSQL server you can connect to
 
