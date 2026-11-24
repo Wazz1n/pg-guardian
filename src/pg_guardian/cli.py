@@ -80,5 +80,8 @@ def backup(dsn: DsnOption, out: OutOption = Path("./backups")) -> None:
     except OSError as exc:
         _fail(f"Could not write the backup: {exc}")
 
-    console.print(f"[bold green]Backup created:[/bold green] {escape(str(archive))}")
-    console.print(f"[bold]SHA-256:[/bold] {digest}")
+    console.print(
+        f"[bold green]Backup created:[/bold green] {escape(str(archive))}",
+        soft_wrap=True,
+    )
+    console.print(f"[bold]SHA-256:[/bold] {digest}", soft_wrap=True)
