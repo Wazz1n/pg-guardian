@@ -10,6 +10,7 @@ from rich.table import Table
 
 from pg_guardian.backup import create_verified_backup
 from pg_guardian.db import get_schema_summary
+from pg_guardian.seeder import SeedError, seed_demo_data
 
 app = typer.Typer(
     help="pg-guardian: PostgreSQL audit and backup CLI.",
@@ -85,3 +86,32 @@ def backup(dsn: DsnOption, out: OutOption = Path("./backups")) -> None:
         soft_wrap=True,
     )
     console.print(f"[bold]SHA-256:[/bold] {digest}", soft_wrap=True)
+
+
+SeedSchemaOption = Annotated[
+    str, typer.Option(help="New schema to create and fill (must not exist yet).")
+]
+CustomersOption = Annotated[
+    int, typer.Option(min=1, max=100_000, help="Number of fake customers.")
+]
+SeedOption = Annotated[int, typer.Option(help="Random seed, for reproducible data.")]
+
+
+@app.command("seed")
+def seed_data(
+    dsn: DsnOption,
+    schema: SeedSchemaOption = "pgg_demo",
+    customers: CustomersOption = 100,
+    seed: SeedOption = 42,
+) -> None:
+    """Create a new schema filled with synthetic, reproducible test data."""
+    try:
+        counts = seed_demo_data(dsn, schema, customers, seed)
+    except SeedError as exc:
+        _fail(str(exc))
+    except psycopg.Error as exc:
+        _fail(f"Could not seed the database: {exc}")
+
+    console.print(f"[bold green]Seeded schema[/bold green] '{escape(schema)}':")
+    for table, count in counts.items():
+        console.print(f"  {escape(table)}: {count}")
