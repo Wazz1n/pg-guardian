@@ -13,7 +13,7 @@ from pg_guardian.db import get_schema_summary
 from pg_guardian.seeder import SeedError, seed_demo_data
 
 app = typer.Typer(
-    help="pg-guardian: PostgreSQL audit and backup CLI.",
+    help="pg-guardian: PostgreSQL audit, backup and seeding CLI.",
     no_args_is_help=True,
 )
 console = Console()
